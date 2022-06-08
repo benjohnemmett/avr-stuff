@@ -39,6 +39,35 @@ void SendStringToUart(char* string) {
     }
 }
 
+/*
+    Input must be in the range [0 9]
+*/
+char DecToAscii(uint8_t dec) {
+    return (char)(dec + 0x30);
+}
+
+void PrintChar(char ch) {
+    SendByteToUart(ch);
+}
+
+void Print(uint8_t value) {
+    uint8_t printZeros = 0;
+    if (value > 99) {
+        uint8_t hundreds = value / 100;
+        value -= 100*hundreds;
+        SendByteToUart(DecToAscii(hundreds));
+        printZeros = 1;
+    }
+    if (value > 9) {
+        uint8_t tens = value / 10;
+        value -= 10*tens;
+        SendByteToUart(DecToAscii(tens));
+    } else if (printZeros) {
+        SendByteToUart(DecToAscii(0));
+    }
+    SendByteToUart(DecToAscii(value));
+}
+
 uint8_t ReceiveByteFromUart() {
     loop_until_bit_is_set(UCSR0A, RXC0);
     return UDR0;
