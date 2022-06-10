@@ -94,6 +94,44 @@ void Print(uint8_t value) {
     SendByteToUart(DecToAscii(value));
 }
 
+void Print(uint16_t value) {
+    uint8_t printZeros = 0;
+
+    if (value > 9999) {
+        uint8_t tenthousands = value / 10000;
+        value -= 10000*tenthousands;
+        SendByteToUart(DecToAscii(tenthousands));
+        printZeros = 1;
+    }
+
+    if (value > 999) {
+        uint8_t thousands = value / 1000;
+        value -= 1000*thousands;
+        SendByteToUart(DecToAscii(thousands));
+        printZeros = 1;
+    } else if (printZeros) {
+        SendByteToUart(DecToAscii(0));
+    }
+
+    if (value > 99) {
+        uint8_t hundreds = value / 100;
+        value -= 100*hundreds;
+        SendByteToUart(DecToAscii(hundreds));
+        printZeros = 1;
+    } else if (printZeros) {
+        SendByteToUart(DecToAscii(0));
+    }
+
+    if (value > 9) {
+        uint8_t tens = value / 10;
+        value -= 10*tens;
+        SendByteToUart(DecToAscii(tens));
+    } else if (printZeros) {
+        SendByteToUart(DecToAscii(0));
+    }
+    SendByteToUart(DecToAscii(value));
+}
+
 uint8_t ReceiveByteFromUart() {
     loop_until_bit_is_set(UCSRA, RXC);
     return UDR;
