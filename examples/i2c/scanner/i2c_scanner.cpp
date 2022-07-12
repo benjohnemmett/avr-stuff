@@ -14,13 +14,15 @@ int main() {
     EnableUartTransmission();
     
     while (1) {
+        SendStringToUart((char*)"Starting Scan\r\n");
         for (uint8_t id = 0; id < 128; id++) {
             PORTB &= ~(1 << PB0);
             _delay_ms(30);
 
             PORTB |= (1 << PB0);
             if (DeviceIsConnected(id)) {
-                SendByteToUart(id);
+                Print(id);
+                SendStringToUart((char*)"\r\n");
                 for (uint8_t i = 0; i < 3; i++) {
                     _delay_ms(200);
                     PORTB &= ~(1 << PB0);
